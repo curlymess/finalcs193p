@@ -20,6 +20,7 @@ struct AvatarPreviewView: View {
             Image(baseImageName)
                 .resizable()
                 .scaledToFit()
+                .zIndex(1)
 
             // Background (placed behind character)
             if let bg = avatar.selectedItems[.background] {
@@ -34,17 +35,19 @@ struct AvatarPreviewView: View {
                 Image(outfit.imageName)
                     .resizable()
                     .scaledToFit()
+                    .zIndex(2)
                 
             }
 
             // Extra items - use @1x img
             if let extra = avatar.selectedItems[.extra] {
-                Image(extra.name)
+                Image(extra.imageName)
                     .resizable()
                     .scaledToFit()
+                    .zIndex(3)
             }
         }
-        .frame(width: 300, height: 400)
+        .frame(width: 300, height: 300)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(radius: 5)
         .onChange(of: avatar.selectedItems[.outfit]) { _, newValue in
@@ -58,17 +61,7 @@ struct AvatarPreviewView: View {
 }
 
 #Preview {
-    let model = AvatarModel()
-    model.skinColor = .pink
-    model.eyeColor = .blue
-    model.selectedItems[.background] = ClothingItem(name: "Bg1", imageName: "bg1", category: .background)
-
-    return NavigationStack {
+    PreviewWrapper {
         AvatarPreviewView()
-            .environmentObject(model)
     }
 }
-
-// preview in customization view
-
-

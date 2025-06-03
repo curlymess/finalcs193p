@@ -11,19 +11,25 @@ struct WelcomeView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 40) {
-                Text("Let's get fancy!")
-                    .font(.largeTitle)
+                Spacer()
+                Text("Bunny Friends")
+                    .font(.title(size: 54))
                     .bold()
+                    .foregroundColor(.primary)
+                Spacer()
 
-                NavigationLink("Start Dressing Up", destination: CustomizationView())
+                NavigationLink("Play", destination: CharacterSelectView())
                     .buttonStyle(.borderedProminent)
                     .padding(.horizontal, 40)
+                    .toolbar {
+                        ToolbarItem() {
+                            NavigationLink(destination: SettingsView()) {
+                                Image(systemName: "gearshape.fill")
+                            }
+                        }
+                    }
 
-                NavigationLink("View Saved Avatars", destination: GalleryView())
-                    .buttonStyle(.bordered)
-                    .padding(.horizontal, 40)
-
-                NavigationLink("Settings", destination: SettingsView())
+                NavigationLink("Gallery", destination: GalleryView())
                     .buttonStyle(.bordered)
                     .padding(.horizontal, 40)
 

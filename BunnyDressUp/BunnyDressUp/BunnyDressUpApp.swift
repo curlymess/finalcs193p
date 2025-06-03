@@ -15,6 +15,7 @@ struct DressUpApp: App {
         WindowGroup {
             WelcomeView()
                 .environmentObject(avatar)
+                .environment(\.font, Font.custom("CustomFont", size: 14))
                 .onAppear {
                     if avatar.isMusicOn {
                         MusicPlayer.shared.play()
@@ -24,3 +25,13 @@ struct DressUpApp: App {
     }
 }
 
+// #ffebe8
+// #FDDDE6
+// 0em dotted #ccc
+// #ddd hover
+
+
+// vanilla ice - #F3E1E7 bg
+// magenta - #F279BC
+// lavender - #B6B9F2
+// green - #66D998

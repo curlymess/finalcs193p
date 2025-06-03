@@ -9,14 +9,10 @@ import SwiftUI
 
 struct CustomizationView: View {
     @EnvironmentObject var avatar: AvatarModel
-    @State private var selectedCategory: CustomizationCategory = .selectCharacter
+    @State private var selectedCategory: CustomizationCategory = .background
 
     let items: [ClothingItem] = [
-        // Characters
-        ClothingItem(name: "Bunny", imageName: "bunny", category: .selectCharacter),
-        ClothingItem(name: "Bunny2", imageName: "bunny", category: .selectCharacter),
-        ClothingItem(name: "Bunny3", imageName: "bunny", category: .selectCharacter),
-        ClothingItem(name: "Bunny4", imageName: "bunny", category: .selectCharacter),
+        // select Character on previous screen
 
         // Backgrounds
         ClothingItem(name: "Bg1", imageName: "Bg1", category: .background),
@@ -41,13 +37,19 @@ struct CustomizationView: View {
         ClothingItem(name: "Extra5", imageName: "extra5", category: .extra),
         ClothingItem(name: "Extra6", imageName: "extra6", category: .extra),
     ]
+    
+    var filteredCategories: [CustomizationCategory] {
+        CustomizationCategory.allCases.filter { $0 != .selectCharacter }
+    }
 
     var body: some View {
         VStack {
             // select item to change
             Picker("Category", selection: $selectedCategory) {
-                ForEach(CustomizationCategory.allCases) { category in
-                    Text(category.displayName).tag(category)
+                ForEach(filteredCategories) { category in
+                    Text(category.displayName)
+//                        .font(.heading(size: 10))
+                        .tag(category)
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
@@ -55,39 +57,44 @@ struct CustomizationView: View {
 
             // actually items to dress character with show display depending the category
             ScrollView(.horizontal) {
-                HStack(spacing: 20) {
+                HStack(alignment: .center) {
                     ForEach(items.filter { $0.category == selectedCategory }) { item in
                         VStack {
-                            Image(
-                                (item.category == .outfit || item.category == .extra) ? (item.imageName + "_icon") : item.imageName)
+                            GeometryReader { geo in
+                                let size = min(geo.size.width, geo.size.height)
+                                
+                                Image(
+                                    (item.category == .outfit || item.category == .extra) ? (item.imageName + "_icon") : item.imageName
+                                )
                                 .resizable()
-                                .frame(width: 80, height: 80)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .scaledToFit()
+                                .frame(width: size, height: size)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
-                                        .stroke(avatar.selectedItems[selectedCategory] == item ? Color.blue : Color.clear, lineWidth: 3)
+                                        .stroke(avatar.selectedItems[selectedCategory] == item ? Color.primary : Color.clear, lineWidth: 3)
                                 )
+                                .background(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .onTapGesture {
                                     withAnimation {
                                         avatar.selectedItems[selectedCategory] = item
                                     }
                                 }
+                            }
+                            .aspectRatio(1, contentMode: .fit) // sqyare
+                            
                             Text(item.name)
                                 .font(.caption)
                         }
+                        .frame(width: 100) // Adjust this to control the horizontal space per item
                     }
+                    
                 }
-                .padding()
             }
 
             Spacer()
 
-            Text("Preview")
-                .font(.headline)
-
             AvatarPreviewView()
-                .frame(width: 300, height: 400)
-                .padding()
 
             Button("Save Avatar") {
                 avatar.saveCurrentAvatar()
@@ -96,20 +103,12 @@ struct CustomizationView: View {
             .padding()
         }
         .navigationTitle("Customize")
+        .appStyle()
     }
 }
 
 #Preview {
-    let model = AvatarModel()
-    model.skinColor = .pink
-    model.eyeColor = .blue
-    model.selectedItems[.selectCharacter] = ClothingItem(name: "Bunny", imageName: "bunny", category: .selectCharacter)
-    model.selectedItems[.background] = ClothingItem(name: "Bg1", imageName: "Bg1", category: .background)
-    model.selectedItems[.extra] = ClothingItem(name: "Extra6", imageName: "extra6", category: .extra)
-    model.selectedItems[.outfit] = ClothingItem(name: "Outfit6", imageName: "outfit6", category: .outfit)
-
-    return NavigationStack {
+    PreviewWrapper {
         CustomizationView()
-            .environmentObject(model)
     }
 }
