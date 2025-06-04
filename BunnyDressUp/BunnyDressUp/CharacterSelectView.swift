@@ -13,9 +13,14 @@ struct CharacterSelectView: View {
 
     let characters: [ClothingItem] = [
         ClothingItem(name: "Bunny", imageName: "bunny", category: .selectCharacter),
-        ClothingItem(name: "Bunny2", imageName: "bunny", category: .selectCharacter),
-        ClothingItem(name: "Bunny3", imageName: "bunny", category: .selectCharacter),
-        ClothingItem(name: "Bunny4", imageName: "bunny", category: .selectCharacter)
+        ClothingItem(name: "Bunny1", imageName: "bunny1", category: .selectCharacter),
+        ClothingItem(name: "Bunny2", imageName: "bunny2", category: .selectCharacter),
+        ClothingItem(name: "Bunny3", imageName: "bunny3", category: .selectCharacter),
+        ClothingItem(name: "Bunny4", imageName: "bunny4", category: .selectCharacter),
+        ClothingItem(name: "Bunny5", imageName: "bunny5", category: .selectCharacter),
+        ClothingItem(name: "Bunny6", imageName: "bunny6", category: .selectCharacter),
+        ClothingItem(name: "Bunny7", imageName: "bunny7", category: .selectCharacter)
+
     ]
 
     var body: some View {
