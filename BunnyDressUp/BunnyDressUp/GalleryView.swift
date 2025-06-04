@@ -15,7 +15,9 @@ struct GalleryView: View {
     // for multi select editing
     @State private var isEditing = false
     @State private var selectedAvatars: Set<UUID> = []
-
+    // delet confirm
+    @State private var showingDeleteConfirmation = false
+    @State private var avatarsToDelete: [SavedAvatar] = []
 
     var body: some View {
         VStack{
@@ -83,7 +85,8 @@ struct GalleryView: View {
                             }
                             
                             Button(role: .destructive) {
-                                avatar.deleteAvatar(saved)
+//                                avatar.deleteAvatar(saved)
+                                avatarsToDelete = [saved]
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -97,12 +100,7 @@ struct GalleryView: View {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     if isEditing {
                         Button(role: .destructive) {
-                            for id in selectedAvatars {
-                                if let avatarToDelete = avatar.savedAvatars.first(where: { $0.id == id }) {
-                                    avatar.deleteAvatar(avatarToDelete)
-                                }
-                            }
-                            selectedAvatars.removeAll()
+                            avatarsToDelete = avatar.savedAvatars.filter { selectedAvatars.contains($0.id) }
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
@@ -124,24 +122,26 @@ struct GalleryView: View {
                     }
                 }
             }
-            .alert("Rename Avatar", isPresented: Binding(
-                get: { renamingAvatar != nil },
-                set: { if !$0 { renamingAvatar = nil } }
-            ), actions: {
-                TextField("New name", text: $newName)
-                Button("Save") {
-                    if let index = avatar.savedAvatars.firstIndex(where: { $0.id == renamingAvatar?.id }) {
-                        avatar.savedAvatars[index].name = newName
-                        avatar.saveAvatarsToDisk()
-                    }
-                    renamingAvatar = nil
+            .alert("Are you sure you want to delete the selected avatars?", isPresented: Binding(
+                get: { !avatarsToDelete.isEmpty },
+                set: { if !$0 { avatarsToDelete = [] } }
+            )) {
+                Button("Delete", role: .destructive) {
+//                    for ava in avatarsToDelete {
+//                        avatar.deleteAvatar(ava)
+//                    }
+//                    selectedAvatars.removeAll(where: { id in avatarsToDelete.contains(where: { $0.id == id }) })
+                    avatarsToDelete = []
                 }
                 Button("Cancel", role: .cancel) {
-                    renamingAvatar = nil
+                    avatarsToDelete = []
                 }
-            }) {
-                Text("Enter a new name for the avatar.")
+            } message: {
+                Text("This action cannot be undone.")
             }
+            
+            Spacer()
+            
         }.background(Color.gre.opacity(0.4))
     }
     

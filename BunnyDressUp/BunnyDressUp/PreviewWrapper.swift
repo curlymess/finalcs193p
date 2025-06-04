@@ -48,6 +48,58 @@ struct PreviewWrapper<Content: View>: View {
             items: model.selectedItems
         )
         avatarModel.savedAvatars.append(savedAvatar2)
+        
+        model.selectedItems[.selectCharacter] = ClothingItem(name: "Bunny4", imageName: "bunny4", category: .selectCharacter)
+        model.selectedItems[.background] = ClothingItem(name: "Bg2", imageName: "Bg2", category: .background)
+        model.selectedItems[.extra] = ClothingItem(name: "Extra6", imageName: "extra3", category: .extra)
+        model.selectedItems[.outfit] = ClothingItem(name: "Outfit6", imageName: "outfit1", category: .outfit)
+
+        let savedAvatar3 = SavedAvatar(
+            id: UUID(),
+            name: "Thyme",
+            date: Date(),
+            items: model.selectedItems
+        )
+        avatarModel.savedAvatars.append(savedAvatar3)
+        
+        model.selectedItems[.selectCharacter] = ClothingItem(name: "Bunny5", imageName: "bunny5", category: .selectCharacter)
+        model.selectedItems[.background] = ClothingItem(name: "Bg3", imageName: "Bg3", category: .background)
+        model.selectedItems[.extra] = ClothingItem(name: "Extra6", imageName: "extra6", category: .extra)
+        model.selectedItems[.outfit] = ClothingItem(name: "Outfit6", imageName: "outfit4", category: .outfit)
+
+        let savedAvatar4 = SavedAvatar(
+            id: UUID(),
+            name: "Zaytoun",
+            date: Date(),
+            items: model.selectedItems
+        )
+        avatarModel.savedAvatars.append(savedAvatar4)
+        
+        model.selectedItems[.selectCharacter] = ClothingItem(name: "Bunny6", imageName: "bunny6", category: .selectCharacter)
+        model.selectedItems[.background] = ClothingItem(name: "Bg3", imageName: "Bg3", category: .background)
+        model.selectedItems[.extra] = ClothingItem(name: "Extra6", imageName: "extra6", category: .extra)
+        model.selectedItems[.outfit] = ClothingItem(name: "Outfit6", imageName: "outfit4", category: .outfit)
+
+        let savedAvatar5 = SavedAvatar(
+            id: UUID(),
+            name: "Olive",
+            date: Date(),
+            items: model.selectedItems
+        )
+        avatarModel.savedAvatars.append(savedAvatar5)
+        
+        model.selectedItems[.selectCharacter] = ClothingItem(name: "Bunny7", imageName: "bunny7", category: .selectCharacter)
+        model.selectedItems[.background] = ClothingItem(name: "Bg3", imageName: "Bg3", category: .background)
+        model.selectedItems[.extra] = ClothingItem(name: "Extra6", imageName: "extra6", category: .extra)
+        model.selectedItems[.outfit] = ClothingItem(name: "Outfit6", imageName: "outfit4", category: .outfit)
+
+        let savedAvatar6 = SavedAvatar(
+            id: UUID(),
+            name: "Bun Bun",
+            date: Date(),
+            items: model.selectedItems
+        )
+        avatarModel.savedAvatars.append(savedAvatar6)
 
         
     }
