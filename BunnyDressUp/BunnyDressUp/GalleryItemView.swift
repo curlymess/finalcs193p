@@ -18,7 +18,9 @@ struct GalleryItemView: View {
         
         VStack(spacing: 8){
             ZStack() {
+                // character
                 AvatarThumbnailView(saved: saved)
+                    .scaleEffect(0.8)
                 
                 ZStack(alignment: .bottom) {
                     // Picture Frame overlay — cycle through 4 frames
@@ -43,7 +45,7 @@ struct GalleryItemView: View {
                     // name laid ontop of the frame cutely :)
                     Text(saved.name.isEmpty ? saved.date.formatted(date: .abbreviated, time: .omitted) : saved.name)
                         .font(.alert(size:16))
-                        .padding(.bottom, 17)
+                        .padding(.bottom, 22)
                 }
             }
         }

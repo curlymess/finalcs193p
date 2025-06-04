@@ -20,7 +20,7 @@ struct GalleryView: View {
     @State private var avatarsToDelete: [SavedAvatar] = []
 
     var body: some View {
-        VStack{
+        VStack(){
             Text("Gallery")
                 .font(.title(size: 60))
                 .foregroundColor(.primary)
@@ -30,7 +30,6 @@ struct GalleryView: View {
                     ForEach(avatar.savedAvatars) { saved in
                         let isSelected = selectedAvatars.contains(saved.id)
                         let frameIndex = avatar.savedAvatars.firstIndex(where: { $0.id == saved.id }) ?? 0
-                        
                         
                         GalleryItemView(
                             saved: saved,
@@ -47,84 +46,107 @@ struct GalleryView: View {
                                 }
                             }
                         )
-                        .padding()
-                        .contextMenu {
-                            Button {
-                                renamingAvatar = saved
-                                newName = saved.name
-                            } label: {
-                                Label("Rename", systemImage: "pencil")
-                            }
-                            
-                            Button() {
-                                //avatar.shareAvatar()
-                            } label: {
-                                Label("Share", systemImage: "square.and.arrow.up") // TODO
-                            }
-                            
-                            Button(role: .destructive) {
-                                avatarsToDelete = [saved]
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                            
-                        }
-                    }
-                    
-                }
-            }
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    if isEditing {
-                        Button(role: .destructive) {
-                            avatarsToDelete = avatar.savedAvatars.filter { selectedAvatars.contains($0.id) }
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                        
-                        Button {
-                            // TODO: Add actual share functionality
-                        } label: {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                        }
-                    }
-                    
-                    Button(isEditing ? "Done" : "Edit") {
-                        withAnimation {
-                            isEditing.toggle()
-                            if !isEditing {
-                                selectedAvatars.removeAll()
-                            }
-                        }
+                        .contextMenu { makeAvatarContextMenu(for: saved) }
                     }
                 }
             }
-            .alert("Are you sure you want to delete the selected avatars?", isPresented: Binding(
-                get: { !avatarsToDelete.isEmpty },
-                set: { if !$0 { avatarsToDelete = [] } }
-            )) {
-                Button("Delete", role: .destructive) {
-//                    for ava in avatarsToDelete {
-//                        avatar.deleteAvatar(ava)
-//                    }
-//                    selectedAvatars.removeAll(where: { id in avatarsToDelete.contains(where: { $0.id == id }) })
-//                    avatarsToDelete = []
-                }
-                Button("Cancel", role: .cancel) {
-                    avatarsToDelete = []
-                }
-            } message: {
-                Text("This action cannot be undone.")
+            .toolbar { galleryToolbar() }
+            .deletionAlert(avatarsToDelete: $avatarsToDelete) { toDelete in
+                deleteAvatars(toDelete)
             }
-            
+
             Spacer()
             
-        }.background(Color.gre.opacity(0.4))
+        }
+        .background(Color.gre.opacity(0.4))
     }
     
+    // MARK: Private Functions
+    
+    private func deleteAvatars(_ toDelete: [SavedAvatar]) {
+        for item in toDelete {
+            avatar.deleteAvatar(item)
+        }
+        selectedAvatars.subtract(toDelete.map { $0.id })
+        avatarsToDelete = []
+    }
+    
+    @ViewBuilder
+    private func makeAvatarContextMenu(for saved: SavedAvatar) -> some View {
+        Button {
+            renamingAvatar = saved
+            newName = saved.name
+        } label: {
+            Label("Rename", systemImage: "pencil")
+        }
+
+        Button {
+            // avatar.shareAvatar(saved) // todo: implement sharing
+        } label: {
+            Label("Share", systemImage: "square.and.arrow.up")
+        }
+
+        Button(role: .destructive) {
+            avatarsToDelete = [saved]
+        } label: {
+            Label("Delete", systemImage: "trash")
+        }
+    }
+    
+    @ToolbarContentBuilder
+    private func galleryToolbar() -> some ToolbarContent {
+        ToolbarItemGroup(placement: .navigationBarTrailing) {
+            if isEditing {
+                Button(role: .destructive) {
+                    avatarsToDelete = avatar.savedAvatars.filter { selectedAvatars.contains($0.id) }
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+                
+                Button {
+                    // TODO: Add actual share functionality
+                } label: {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+            }
+
+            Button(isEditing ? "Done" : "Edit") {
+                withAnimation {
+                    isEditing.toggle()
+                    if !isEditing {
+                        selectedAvatars.removeAll()
+                    }
+                }
+            }
+        }
+    }
+
+
     
 }
 
+extension View {
+    func deletionAlert(
+        avatarsToDelete: Binding<[SavedAvatar]>,
+        deleteAction: @escaping ([SavedAvatar]) -> Void
+    ) -> some View {
+        self.alert("Are you sure you want to delete the selected bunnies?",
+            isPresented: Binding(
+                get: { !avatarsToDelete.wrappedValue.isEmpty },
+                set: { if !$0 { avatarsToDelete.wrappedValue = [] } }
+            )
+        ) {
+            Button("Delete", role: .destructive) {
+                deleteAction(avatarsToDelete.wrappedValue)
+            }
+            Button("Cancel", role: .cancel) {
+                avatarsToDelete.wrappedValue = []
+            }
+        } message: {
+            Text("You can't undo this action!")
+        }
+    }
+}
 
 #Preview {
     PreviewWrapper{

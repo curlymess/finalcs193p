@@ -10,6 +10,8 @@ import SwiftUI
 struct CustomizationView: View {
     @EnvironmentObject var avatar: AvatarModel
     @State private var selectedCategory: CustomizationCategory = .background
+    @State private var showGallery = false
+
 
     let items: [ClothingItem] = [
         // select Character on previous screen
@@ -44,11 +46,17 @@ struct CustomizationView: View {
 
     var body: some View {
         VStack {
+            
+            Text("Dress Up!")
+                .font(.title(size: 60))
+                .foregroundStyle(Color.primary)
+            
             // select item to change
             Picker("Category", selection: $selectedCategory) {
                 ForEach(CustomizationCategory.allCases) { category in
                     if category != .selectCharacter {
                         Text(category.displayName)
+//                            .font(.heading(size: 20)) font doesnt work here for some reason
                             .tag(category)
                     }
                 }
@@ -85,9 +93,8 @@ struct CustomizationView: View {
                             .aspectRatio(1, contentMode: .fit) // sqyare
                             
                             Text(item.name)
-                                .font(.caption)
+                                .font(.body(size: 16))
                         }
-                        .frame(width: 100) // Adjust this to control the horizontal space per item
                     }
                     
                 }
@@ -97,14 +104,18 @@ struct CustomizationView: View {
 
             AvatarPreviewView()
 
-            Button("Save Avatar") {
+            Button("Add to Gallery!") {
                 avatar.saveCurrentAvatar()
+                showGallery = true
             }
             .buttonStyle(.borderedProminent)
             .padding()
         }
-        .navigationTitle("Customize")
         .appStyle()
+        .navigationDestination(isPresented: $showGallery) {
+            GalleryView()
+                .environmentObject(avatar)
+        }
     }
 }
 

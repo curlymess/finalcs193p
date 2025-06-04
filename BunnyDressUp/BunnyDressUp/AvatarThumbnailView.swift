@@ -38,7 +38,6 @@ struct AvatarThumbnailView: View {
                     .scaledToFit()
             }
         }
-        .frame(width: 120, height: 160)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .shadow(radius: 3)
     }
