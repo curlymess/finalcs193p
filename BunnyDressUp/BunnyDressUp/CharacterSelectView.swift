@@ -11,6 +11,8 @@ struct CharacterSelectView: View {
     @EnvironmentObject var avatar: AvatarModel
     @State private var selectedCharacter: ClothingItem? = nil
     @State private var showStarsFor: ClothingItem? = nil
+    @State private var scrollViewProxy: ScrollViewProxy? = nil
+    @State private var scrollIndex: Int = 0
 
     let characters: [ClothingItem] = [
         ClothingItem(name: "Bunny", imageName: "bunny", category: .selectCharacter),
@@ -24,16 +26,18 @@ struct CharacterSelectView: View {
 
     var body: some View {
         VStack {
-            Text("Choose Your Character")
-                .font(.heading(size: 48))
-                .padding()
-            Spacer()
-            
+            VStack(spacing: 0){
+                Text("Choose Your")
+                    .font(.heading(size: 36))
+                Text("Character")
+                    .font(.heading(size: 44))
+            }.padding()
+
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color.gray.opacity(0.2))
                     .frame(maxHeight: UIScreen.main.bounds.height / 3)
-                
+
                 if let selected = selectedCharacter {
                     Image(selected.imageName)
                         .resizable()
@@ -45,43 +49,64 @@ struct CharacterSelectView: View {
                         .font(.system(size: 64, weight: .bold))
                         .foregroundColor(.gray)
                 }
-                
             }
             .padding()
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 16) {
-                    ForEach(characters) { character in
-                        CharacterCardView(
-                            character: character,
-                            isSelected: selectedCharacter == character,
-                            showStars: showStarsFor == character
-                        ) {
-                            withAnimation {
-                                selectedCharacter = character
-                                showStarsFor = character
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    showStarsFor = nil
+            ZStack {
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 16) {
+                            ForEach(characters.indices, id: \.self) { index in
+                                let character = characters[index]
+                                CharacterCardView(
+                                    character: character,
+                                    isSelected: selectedCharacter == character,
+                                    showStars: showStarsFor == character
+                                ) {
+                                    withAnimation {
+                                        selectedCharacter = character
+                                        showStarsFor = character
+                                        scrollIndex = index
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                            showStarsFor = nil
+                                        }
+                                    }
                                 }
+                                .id(index)
                             }
                         }
+                        .padding(.horizontal)
+                    }
+                    .onAppear {
+                        scrollViewProxy = proxy
+                    }
+                }
+
+                HStack {
+                    Button(action: {
+                        scrollBy(-1)
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.primary)
+                            .font(.title)
+                            .padding()
+                    }
+                    Spacer()
+                    Button(action: {
+                        scrollBy(1)
+                    }) {
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.primary)
+                            .font(.title)
+                            .padding()
                     }
                 }
                 .padding(.horizontal)
             }
-            
-            HStack {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.gray)
-                    .font(.title)
-                    .padding(.leading, 8)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-                    .font(.title)
-                    .padding(.trailing, 8)
-            }
-            
+            .frame(height: 150)
+
+            Spacer()
+
             if let selected = selectedCharacter {
                 NavigationLink(destination: {
                     CustomizationView()
@@ -103,8 +128,17 @@ struct CharacterSelectView: View {
             avatar.loadSavedAvatar()
         }
     }
-}
 
+    private func scrollBy(_ direction: Int) {
+        guard let proxy = scrollViewProxy else { return }
+        let newIndex = min(max(scrollIndex + direction, 0), characters.count - 1)
+        scrollIndex = newIndex
+        withAnimation {
+            proxy.scrollTo(newIndex, anchor: .center)
+        }
+    }
+
+}
 
 #Preview {
     PreviewWrapper {
