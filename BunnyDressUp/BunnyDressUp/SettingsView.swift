@@ -15,7 +15,9 @@ struct SettingsView: View {
             Toggle("Background Music", isOn: $avatar.isMusicOn)
         }
         .navigationTitle("Settings")
+        .font(.body(size: 32))
         .padding()
+        .background(Color.bgColor)
     }
 }
 

@@ -14,8 +14,8 @@ struct PreviewWrapper<Content: View>: View {
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
         let avatarModel = AvatarModel()
-        avatarModel.skinColor = .pink
-        avatarModel.eyeColor = .blue
+//        avatarModel.skinColor = .pink
+//        avatarModel.eyeColor = .blue
         avatarModel.selectedItems[.selectCharacter] = ClothingItem(name: "Bunny", imageName: "bunny", category: .selectCharacter)
         avatarModel.selectedItems[.background] = ClothingItem(name: "Bg1", imageName: "Bg1", category: .background)
         avatarModel.selectedItems[.extra] = ClothingItem(name: "Extra6", imageName: "extra6", category: .extra)

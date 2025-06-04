@@ -11,7 +11,7 @@ struct AvatarPreviewView: View {
     @EnvironmentObject var avatar: AvatarModel
 
     var baseImageName: String {
-        avatar.selectedItems[.selectCharacter]?.imageName ?? "default_character"
+        avatar.selectedItems[.selectCharacter]?.imageName ?? "bunny"
     }
 
     var body: some View {

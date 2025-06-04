@@ -11,28 +11,36 @@ struct WelcomeView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 40) {
-                Spacer()
-                Text("Bunny Friends")
-                    .font(.title(size: 54))
-                    .bold()
-                    .foregroundColor(.primary)
+                VStack(spacing: 0){
+                    Text("Bunny")
+                        .font(.title(size: 80))
+                        .bold()
+                        .foregroundColor(.primary)
+                    Text("Friends")
+                        .font(.title(size: 76))
+                        .bold()
+                        .foregroundColor(.primary)
+                }
                 Spacer()
 
-                NavigationLink("Play", destination: CharacterSelectView())
-                    .buttonStyle(.borderedProminent)
-                    .padding(.horizontal, 40)
-                    .toolbar {
-                        ToolbarItem() {
-                            NavigationLink(destination: SettingsView()) {
-                                Image(systemName: "gearshape.fill")
+                VStack(spacing: 30){
+                    NavigationLink("Play", destination: CharacterSelectView())
+                        .font(.heading(size: 60))
+                        .buttonStyle(.borderedProminent)
+                        .padding(.horizontal, 40)
+                        .toolbar {
+                            ToolbarItem() {
+                                NavigationLink(destination: SettingsView()) {
+                                    Image(systemName: "gearshape.fill")
+                                }
                             }
                         }
-                    }
-
-                NavigationLink("Gallery", destination: GalleryView())
-                    .buttonStyle(.bordered)
-                    .padding(.horizontal, 40)
-
+                    
+                    NavigationLink("Gallery", destination: GalleryView())
+                        .font(.heading(size: 60))
+                        .buttonStyle(.borderedProminent)
+                        .padding(.horizontal, 40)
+                }
                 Spacer()
             }
             .padding()
@@ -41,10 +49,9 @@ struct WelcomeView: View {
 }
 
 #Preview{
-    let model = AvatarModel()
-        // auto load models for the gallery later
-    WelcomeView()
-        .environmentObject(model)
+    PreviewWrapper{
+        WelcomeView()
+    }
 }
 
 // to do

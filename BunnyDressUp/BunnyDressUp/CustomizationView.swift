@@ -46,10 +46,11 @@ struct CustomizationView: View {
         VStack {
             // select item to change
             Picker("Category", selection: $selectedCategory) {
-                ForEach(filteredCategories) { category in
-                    Text(category.displayName)
-//                        .font(.heading(size: 10))
-                        .tag(category)
+                ForEach(CustomizationCategory.allCases) { category in
+                    if category != .selectCharacter {
+                        Text(category.displayName)
+                            .tag(category)
+                    }
                 }
             }
             .pickerStyle(SegmentedPickerStyle())

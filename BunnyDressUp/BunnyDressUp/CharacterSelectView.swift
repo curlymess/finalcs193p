@@ -19,57 +19,77 @@ struct CharacterSelectView: View {
     ]
 
     var body: some View {
-        GeometryReader { geometry in
-            let columnCount = geometry.size.width < 500 ? 2 : 3
-            let columns = Array(repeating: GridItem(.flexible(), spacing: 20), count: columnCount)
-
-            VStack {
-                Spacer()
+            GeometryReader { geometry in
+                let columnCount = geometry.size.width < 500 ? 2 : 3
+                let columns = Array(repeating: GridItem(.flexible(), spacing: 20), count: columnCount)
                 
-                Text("Choose Your Character")
-                    .font(.heading(size: 48))
-                    .padding()
-
-                ScrollView {
-                    LazyVGrid(columns: columns) {
-                        ForEach(characters) { character in
-                            Image(character.imageName)
-                                .resizable()
-                                .frame(width: 180, height: 180)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(character == selectedCharacter ? .primary : Color.clear, lineWidth: 3)
-                                )
-                                .scaleEffect(character == selectedCharacter ? 1.1 : 1.0)
-                                .animation(.easeInOut(duration: 0.2), value: selectedCharacter)
-                                .onTapGesture {
-                                    withAnimation {
-                                        selectedCharacter = character
+                VStack {
+                    Spacer()
+                    
+                    VStack(spacing: 0){
+                        Text("Choose Your")
+                            .font(.heading(size: 48))
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        Text("Character")
+                            .font(.heading(size: 48))
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                    .padding(10)
+                    
+                    
+                    ScrollView {
+                        LazyVGrid(columns: columns) {
+                            ForEach(characters) { character in
+                                Image(character.imageName)
+                                    .resizable()
+                                    .frame(width: 180, height: 180)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(character == selectedCharacter ? Color.primary : Color.clear, lineWidth: 3)
+                                    )
+                                    .scaleEffect(character == selectedCharacter ? 1.1 : 1.0)
+                                    .animation(.easeInOut(duration: 0.2), value: selectedCharacter)
+                                    .onTapGesture {
+                                        withAnimation {
+                                            selectedCharacter = character
+                                        }
                                     }
-                                }
+                                    .background(Color.white)
+//                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .padding()
+                            }
                         }
+                        .padding()
+                        .frame(alignment: .center)
+                        .background(Color.bg2Color)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
-                    .padding()
-                }
+                    .background(Color.bgColor)
+                    
+                    if let selected = selectedCharacter
+                    {
+                        NavigationLink(destination: {
+                            CustomizationView()
+                                .onAppear {
+                                    avatar.selectedItems[.selectCharacter] = selected
+                                    avatar.saveCurrentAvatar() // Save selection
+                                }
+                        }) {
+                            Text("Next")
+                                .bold()
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding()
+                    }
 
-                if let selected = selectedCharacter {
-                    NavigationLink(value: selected) {
-                        Text("Next")
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .padding()
                 }
             }
-            .navigationDestination(for: ClothingItem.self) { character in
-                CustomizationView()
-                    .onAppear {
-                        avatar.selectedItems[.selectCharacter] = character
-                    }
+            .background(Color.bgColor)
+            .onAppear {
+                avatar.loadSavedAvatar()
             }
-        }
     }
 }
 
@@ -77,5 +97,6 @@ struct CharacterSelectView: View {
 #Preview {
     PreviewWrapper {
         CharacterSelectView()
+            .environment(\.font, Font.body(size: 24))
     }
 }
