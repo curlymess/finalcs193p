@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct WelcomeView: View {
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 40) {
@@ -45,7 +46,9 @@ struct WelcomeView: View {
             }
             .padding()
         }
+        
     }
+        
 }
 
 #Preview{
