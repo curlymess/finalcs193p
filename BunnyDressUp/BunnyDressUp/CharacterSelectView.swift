@@ -43,44 +43,21 @@ struct CharacterSelectView: View {
                     
                     
                     ScrollView {
-                        LazyVGrid(columns: columns) {
-                            ForEach(characters) { character in
-                                ZStack {
-                                    Image(character.imageName)
-                                        .resizable()
-                                        .frame(width: 180, height: 180)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .stroke(character == selectedCharacter ? Color.primary : Color.clear, lineWidth: 3)
-                                        )
-                                        .scaleEffect(character == selectedCharacter ? 1.1 : 1.0)
-                                        .animation(.easeInOut(duration: 0.2), value: selectedCharacter)
-                                        .onTapGesture {
-                                            withAnimation {
-                                                selectedCharacter = character
-                                                showStarsFor = character
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                                    showStarsFor = nil
-                                                }
-                                            }
-                                        }
-                                    
-                                    if showStarsFor == character {
-                                        ShimmerStars()
-                                            .transition(.opacity)
-                                            .zIndex(1)
-                                            .allowsHitTesting(false) // So taps pass through stars
-                                    }
+                        CharacterGridView(
+                            characters: characters,
+                            selectedCharacter: selectedCharacter,
+                            showStarsFor: showStarsFor
+                        ) { character in
+                            withAnimation {
+                                selectedCharacter = character
+                                showStarsFor = character
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    showStarsFor = nil
                                 }
                             }
                         }
-                        .padding()
-                        .frame(alignment: .center)
-                        .background(Color.bg2Color)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .background(Color.bgColor)
                     }
-                    .background(Color.bgColor)
                     
                     if let selected = selectedCharacter
                     {
