@@ -10,6 +10,7 @@ import SwiftUI
 struct CharacterSelectView: View {
     @EnvironmentObject var avatar: AvatarModel
     @State private var selectedCharacter: ClothingItem? = nil
+    @State private var showStarsFor: ClothingItem? = nil
 
     let characters: [ClothingItem] = [
         ClothingItem(name: "Bunny", imageName: "bunny", category: .selectCharacter),
@@ -20,7 +21,6 @@ struct CharacterSelectView: View {
         ClothingItem(name: "Bunny5", imageName: "bunny5", category: .selectCharacter),
         ClothingItem(name: "Bunny6", imageName: "bunny6", category: .selectCharacter),
         ClothingItem(name: "Bunny7", imageName: "bunny7", category: .selectCharacter)
-
     ]
 
     var body: some View {
@@ -45,24 +45,34 @@ struct CharacterSelectView: View {
                     ScrollView {
                         LazyVGrid(columns: columns) {
                             ForEach(characters) { character in
-                                Image(character.imageName)
-                                    .resizable()
-                                    .frame(width: 180, height: 180)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(character == selectedCharacter ? Color.primary : Color.clear, lineWidth: 3)
-                                    )
-                                    .scaleEffect(character == selectedCharacter ? 1.1 : 1.0)
-                                    .animation(.easeInOut(duration: 0.2), value: selectedCharacter)
-                                    .onTapGesture {
-                                        withAnimation {
-                                            selectedCharacter = character
+                                ZStack {
+                                    Image(character.imageName)
+                                        .resizable()
+                                        .frame(width: 180, height: 180)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .stroke(character == selectedCharacter ? Color.primary : Color.clear, lineWidth: 3)
+                                        )
+                                        .scaleEffect(character == selectedCharacter ? 1.1 : 1.0)
+                                        .animation(.easeInOut(duration: 0.2), value: selectedCharacter)
+                                        .onTapGesture {
+                                            withAnimation {
+                                                selectedCharacter = character
+                                                showStarsFor = character
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                                    showStarsFor = nil
+                                                }
+                                            }
                                         }
+                                    
+                                    if showStarsFor == character {
+                                        ShimmerStars()
+                                            .transition(.opacity)
+                                            .zIndex(1)
+                                            .allowsHitTesting(false) // So taps pass through stars
                                     }
-                                    .background(Color.white)
-//                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .padding()
+                                }
                             }
                         }
                         .padding()
