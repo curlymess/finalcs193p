@@ -21,11 +21,12 @@ struct CharacterCardView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: size, height: size)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(isSelected ? Color.primary : Color.clear, lineWidth: 3)
+                        .stroke(isSelected ? Color.gre : Color.clear, lineWidth: 8)
                 )
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .scaleEffect(isSelected ? 1.00 : 0.90)
                 .animation(.easeInOut(duration: 0.2), value: isSelected)
                 .onTapGesture {

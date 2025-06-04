@@ -33,77 +33,80 @@ struct CharacterSelectView: View {
                     .font(.heading(size: 44))
             }.padding()
 
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.2))
-                    .frame(maxHeight: UIScreen.main.bounds.height / 3)
-
-                if let selected = selectedCharacter {
-                    Image(selected.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+            VStack{
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.gray.opacity(0.2))
                         .frame(maxHeight: UIScreen.main.bounds.height / 3)
-                        .transition(.opacity)
-                } else {
-                    Image(systemName: "questionmark")
-                        .font(.system(size: 64, weight: .bold))
-                        .foregroundColor(.gray)
+                    
+                    if let selected = selectedCharacter {
+                        Image(selected.imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxHeight: UIScreen.main.bounds.height / 3)
+                            .transition(.opacity)
+                    } else {
+                        Image(systemName: "questionmark")
+                            .font(.system(size: 64, weight: .bold))
+                            .foregroundColor(.gray)
+                    }
                 }
-            }
-            .padding()
-
-            ZStack {
-                ScrollViewReader { proxy in
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 16) {
-                            ForEach(characters.indices, id: \.self) { index in
-                                let character = characters[index]
-                                CharacterCardView(
-                                    character: character,
-                                    isSelected: selectedCharacter == character,
-                                    showStars: showStarsFor == character
-                                ) {
-                                    withAnimation {
-                                        selectedCharacter = character
-                                        showStarsFor = character
-                                        scrollIndex = index
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                            showStarsFor = nil
+                .padding()
+                
+                ZStack {
+                    ScrollViewReader { proxy in
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(characters.indices, id: \.self) { index in
+                                    let character = characters[index]
+                                    CharacterCardView(
+                                        character: character,
+                                        isSelected: selectedCharacter == character,
+                                        showStars: showStarsFor == character
+                                    ) {
+                                        withAnimation {
+                                            selectedCharacter = character
+                                            showStarsFor = character
+                                            scrollIndex = index
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                                showStarsFor = nil
+                                            }
                                         }
                                     }
+                                    .id(index)
                                 }
-                                .id(index)
                             }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
+                        .onAppear {
+                            scrollViewProxy = proxy
+                        }
                     }
-                    .onAppear {
-                        scrollViewProxy = proxy
+                    
+                    HStack {
+                        Button(action: {
+                            scrollBy(-1)
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.primary)
+                                .font(.title)
+                                .padding()
+                        }
+                        Spacer()
+                        Button(action: {
+                            scrollBy(1)
+                        }) {
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.primary)
+                                .font(.title)
+                                .padding()
+                        }
                     }
+                    .padding(.horizontal)
                 }
-
-                HStack {
-                    Button(action: {
-                        scrollBy(-1)
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.primary)
-                            .font(.title)
-                            .padding()
-                    }
-                    Spacer()
-                    Button(action: {
-                        scrollBy(1)
-                    }) {
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.primary)
-                            .font(.title)
-                            .padding()
-                    }
-                }
-                .padding(.horizontal)
+                .frame(height: 150)
             }
-            .frame(height: 150)
+            .background(Color.bg2Color)
 
             Spacer()
 
