@@ -44,6 +44,19 @@ class AvatarModel: ObservableObject {
             }
         }
     }
+    
+    func deleteAvatar(_ avatarToDelete: SavedAvatar) {
+        savedAvatars.removeAll { $0.id == avatarToDelete.id }
+        saveAvatarsToDisk()
+    }
+
+    func renameAvatar(_ avatarToRename: SavedAvatar, to newName: String) {
+        if let index = savedAvatars.firstIndex(where: { $0.id == avatarToRename.id }) {
+            savedAvatars[index].name = newName
+            saveAvatarsToDisk()
+        }
+    }
+
 
     func saveCurrentAvatar() {
         let formatter = DateFormatter()
@@ -119,11 +132,11 @@ struct ClothingItem: Identifiable, Hashable, Codable {
 
 struct SavedAvatar: Identifiable, Codable {
     let id: UUID
-    let name: String  // let it auto be the date made
+    var name: String  // let it auto be the date made
     let date: Date
 //    let skinColor: CodableColor
 //    let eyeColor: CodableColor
-    let items: [CustomizationCategory: ClothingItem]
+    var items: [CustomizationCategory: ClothingItem]
 }
 
 
