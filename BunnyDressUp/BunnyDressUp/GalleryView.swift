@@ -29,46 +29,24 @@ struct GalleryView: View {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))]) {
                     ForEach(avatar.savedAvatars) { saved in
                         let isSelected = selectedAvatars.contains(saved.id)
-
-                        VStack(spacing: 8) {
-                            ZStack() {
-
-                            AvatarThumbnailView(saved: saved)
-                                        
-                                ZStack(alignment: .bottom) {
-                                    // Picture Frame overlay — cycle through 4 frames
-                                    Image("frame\((avatar.savedAvatars.firstIndex(where: { $0.id == saved.id }) ?? 0) % 4 + 1)")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .overlay(
-                                            isEditing && isSelected ?
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(Color.blue, lineWidth: 4)
-                                            : nil
-                                        )
-                                        .onTapGesture {
-                                            if isEditing {
-                                                if isSelected {
-                                                    selectedAvatars.remove(saved.id)
-                                                } else {
-                                                    selectedAvatars.insert(saved.id)
-                                                }
-                                            }
-                                        }
-                                    // show checkmark on item being selected
-                                    if isEditing {
-                                        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                                            .padding(8)
-                                            .foregroundColor(isSelected ? .blue : .gray)
+                        let frameIndex = avatar.savedAvatars.firstIndex(where: { $0.id == saved.id }) ?? 0
+                        
+                        
+                        GalleryItemView(
+                            saved: saved,
+                            isSelected: isSelected,
+                            isEditing: isEditing,
+                            frameIndex: frameIndex,
+                            onTap: {
+                                if isEditing {
+                                    if isSelected {
+                                        selectedAvatars.remove(saved.id)
+                                    } else {
+                                        selectedAvatars.insert(saved.id)
                                     }
-                                    
-                                    // name laid ontop of the frame cutely :)
-                                    Text(saved.name.isEmpty ? saved.date.formatted(date: .abbreviated, time: .omitted) : saved.name)
-                                        .font(.alert(size:16))
-                                        .padding(.bottom, 17)
-                                    }
+                                }
                             }
-                        }
+                        )
                         .padding()
                         .contextMenu {
                             Button {
@@ -85,7 +63,6 @@ struct GalleryView: View {
                             }
                             
                             Button(role: .destructive) {
-//                                avatar.deleteAvatar(saved)
                                 avatarsToDelete = [saved]
                             } label: {
                                 Label("Delete", systemImage: "trash")
@@ -131,7 +108,7 @@ struct GalleryView: View {
 //                        avatar.deleteAvatar(ava)
 //                    }
 //                    selectedAvatars.removeAll(where: { id in avatarsToDelete.contains(where: { $0.id == id }) })
-                    avatarsToDelete = []
+//                    avatarsToDelete = []
                 }
                 Button("Cancel", role: .cancel) {
                     avatarsToDelete = []

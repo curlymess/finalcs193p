@@ -13,6 +13,10 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Toggle("Background Music", isOn: $avatar.isMusicOn)
+            Toggle("Log in to save your info", isOn: $avatar.isMusicOn)
+
+            
+            
         }
         .navigationTitle("Settings")
         .font(.body(size: 32))
