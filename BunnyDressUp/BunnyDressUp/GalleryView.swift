@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GalleryView: View {
     @EnvironmentObject var avatar: AvatarModel
+    @Binding var path: NavigationPath
     // for renaming
     @State private var renamingAvatar: SavedAvatar? = nil
     @State private var newName: String = ""
@@ -18,6 +19,11 @@ struct GalleryView: View {
     // delet confirm
     @State private var showingDeleteConfirmation = false
     @State private var avatarsToDelete: [SavedAvatar] = []
+    //share button
+    @State private var avatarToShare: SavedAvatar? = nil
+    @State private var isSharing = false
+    @State private var shareImage: UIImage? = nil
+
 
     var body: some View {
         VStack(){
@@ -54,13 +60,35 @@ struct GalleryView: View {
             .deletionAlert(avatarsToDelete: $avatarsToDelete) { toDelete in
                 deleteAvatars(toDelete)
             }
+            .sheet(isPresented: $isSharing) {
+                ShareSheet(activityItems: shareImage.map { [$0] } ?? [])
+            }
+
+
+            .alert("Rename Bunny", isPresented: Binding(
+                get: { renamingAvatar != nil },
+                set: { if !$0 { renamingAvatar = nil } }
+            ), actions: {
+                TextField("New name", text: $newName)
+
+                Button("Save", action: {
+                    if let original = renamingAvatar {
+                        avatar.renameAvatar(original, to: newName)
+                    }
+                    renamingAvatar = nil
+                })
+
+                Button("Cancel", role: .cancel) {
+                    renamingAvatar = nil
+                }
+            })
 
             Spacer()
             
         }
         .background(Color.gre.opacity(0.4))
     }
-    
+
     // MARK: Private Functions
     
     private func deleteAvatars(_ toDelete: [SavedAvatar]) {
@@ -79,13 +107,17 @@ struct GalleryView: View {
         } label: {
             Label("Rename", systemImage: "pencil")
         }
-
+        
         Button {
-            // avatar.shareAvatar(saved) // todo: implement sharing
+            avatarToShare = saved
+            let image = avatar.renderAvatarImage(from: saved)
+            shareImage = image
+            isSharing = true
         } label: {
             Label("Share", systemImage: "square.and.arrow.up")
         }
-
+        
+        
         Button(role: .destructive) {
             avatarsToDelete = [saved]
         } label: {
@@ -103,11 +135,11 @@ struct GalleryView: View {
                     Label("Delete", systemImage: "trash")
                 }
                 
-                Button {
-                    // TODO: Add actual share functionality
-                } label: {
-                    Label("Share", systemImage: "square.and.arrow.up")
-                }
+//                Button {
+//                    // TODO: Add actual share functionality
+//                } label: {
+//                    Label("Share", systemImage: "square.and.arrow.up")
+//                }
             }
 
             Button(isEditing ? "Done" : "Edit") {
@@ -120,9 +152,6 @@ struct GalleryView: View {
             }
         }
     }
-
-
-    
 }
 
 extension View {
@@ -150,6 +179,6 @@ extension View {
 
 #Preview {
     PreviewWrapper{
-        GalleryView()
+        GalleryView(path: .constant(NavigationPath()))
     }
 }

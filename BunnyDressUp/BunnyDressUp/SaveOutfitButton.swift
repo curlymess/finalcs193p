@@ -9,22 +9,25 @@ import SwiftUI
 
 struct SaveOutfitButton: View {
     @EnvironmentObject var avatar: AvatarModel
+    @Binding var path: NavigationPath
     @State private var showSheet = false
 
+
     var body: some View {
-        Button("Save Outfit") {
+        Button("Add to Gallery") {
             showSheet = true
         }
         .sheet(isPresented: $showSheet) {
-            SaveOutfitSheet()
+            SaveOutfitSheet{
+                path.append(AppRoute.gallery)
+            }
         }
     }
 }
 
 #Preview {
     PreviewWrapper{
-        SaveOutfitButton()
-            .environment(\.font, Font.body(size: 24))
+        SaveOutfitButton(path: .constant(NavigationPath()))
     }
 }
 

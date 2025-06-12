@@ -16,7 +16,7 @@ extension View {
 
 #Preview(){
     PreviewWrapper{
-        CustomizationView()
+        CustomizationView(path: .constant(NavigationPath()))
             .appStyle()
     }
 }

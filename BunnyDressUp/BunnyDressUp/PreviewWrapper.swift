@@ -10,6 +10,8 @@ import SwiftUI
 struct PreviewWrapper<Content: View>: View {
     let content: Content
     let model: AvatarModel
+    
+    @State private var path = NavigationPath()
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -105,16 +107,16 @@ struct PreviewWrapper<Content: View>: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             content
         }.environmentObject(model)
-
+        
     }
 }
 
 #Preview {
     PreviewWrapper {
-        CharacterSelectView()
+        CharacterSelectView(path: .constant(NavigationPath()))
     }
 }
 

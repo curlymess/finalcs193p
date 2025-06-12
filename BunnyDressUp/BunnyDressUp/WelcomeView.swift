@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct WelcomeView: View {
+    @Binding var path: NavigationPath
     
     var body: some View {
-        NavigationView {
+        NavigationStack(path: $path) {
             VStack(spacing: 40) {
                 VStack(spacing: 0){
                     Text("Bunny")
@@ -25,26 +26,46 @@ struct WelcomeView: View {
                 Spacer()
 
                 VStack(spacing: 30){
-                    NavigationLink("Play", destination: CharacterSelectView())
-                        .font(.heading(size: 60))
-                        .buttonStyle(.borderedProminent)
-                        .padding(.horizontal, 40)
-                        .toolbar {
-                            ToolbarItem() {
-                                NavigationLink(destination: SettingsView()) {
-                                    Image(systemName: "gearshape.fill")
-                                }
-                            }
-                        }
+                    NavigationLink(value: AppRoute.characterSelect) {
+                        Text("Play")
+                            .font(.heading(size: 60))
+                    }
+                    .font(.heading(size: 60))
+                    .buttonStyle(.borderedProminent)
+                    .padding(.horizontal, 40)
                     
-                    NavigationLink("Gallery", destination: GalleryView())
-                        .font(.heading(size: 60))
-                        .buttonStyle(.borderedProminent)
-                        .padding(.horizontal, 40)
+                    NavigationLink(value: AppRoute.gallery){
+                        Text("Gallery")
+                    }
+                    .font(.heading(size: 60))
+                    .buttonStyle(.borderedProminent)
+                    .padding(.horizontal, 40)
                 }
                 Spacer()
             }
             .padding()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(value: AppRoute.settings) {
+                        Image(systemName: "gearshape.fill")
+                            .imageScale(.large)
+                    }
+                }
+            }
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
+                case .characterSelect:
+                    CharacterSelectView(path: $path)
+                case .customization:
+                    CustomizationView(path: $path)
+                case .gallery:
+                    GalleryView(path: $path)
+                case .settings:
+                    SettingsView(path: $path)
+                case .share:
+                    ShareView(path: $path)
+                }
+            }
         }
         
     }
@@ -53,16 +74,6 @@ struct WelcomeView: View {
 
 #Preview{
     PreviewWrapper{
-        WelcomeView()
+        WelcomeView(path: .constant(NavigationPath()))
     }
 }
-
-// to do
-// connect save avatar button to the actual screen to change the name
-// update UI !!!! make it cute
-// add animations
-// add msuic
-// add sound effects
-// make seetings button properly accessible on each screen
-// add icons for the bg, outfits, etc
-// add more characters

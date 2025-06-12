@@ -33,6 +33,37 @@ class AvatarModel: ObservableObject {
             print("Error saving avatars: \(error)")
         }
     }
+    
+    @MainActor
+    func renderAvatarImage(from saved: SavedAvatar, size: CGSize = CGSize(width: 300, height: 300)) -> UIImage {
+        let avatarView = AvatarThumbnailView(saved: saved)
+            .frame(width: size.width, height: size.height)
+        return renderImage(from: avatarView, size: size)
+    }
+    
+    func renderImage<V: View>(from view: V, size: CGSize) -> UIImage {
+        let controller = UIHostingController(rootView: view)
+        controller.view.frame = CGRect(origin: .zero, size: size)
+        controller.view.backgroundColor = .clear
+
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+        }
+    }
+    
+    func saveImageToTempFile(_ image: UIImage) -> URL? {
+        guard let data = image.pngData() else { return nil }
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("avatar.png")
+        do {
+            try data.write(to: tempURL)
+            return tempURL
+        } catch {
+            print("Failed to write image to temp file:", error)
+            return nil
+        }
+    }
+
 
     func loadSavedAvatar() {
         if let data = UserDefaults.standard.data(forKey: saveKey) {
@@ -133,7 +164,7 @@ struct ClothingItem: Identifiable, Hashable, Codable {
 struct SavedAvatar: Identifiable, Codable {
     let id: UUID
     var name: String  // let it auto be the date made
-    let date: Date
+    var date: Date
 //    let skinColor: CodableColor
 //    let eyeColor: CodableColor
     var items: [CustomizationCategory: ClothingItem]

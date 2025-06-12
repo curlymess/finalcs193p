@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CharacterSelectView: View {
+    @Binding var path: NavigationPath
     @EnvironmentObject var avatar: AvatarModel
     @State private var selectedCharacter: ClothingItem? = nil
     @State private var showStarsFor: ClothingItem? = nil
@@ -111,19 +112,16 @@ struct CharacterSelectView: View {
             Spacer()
 
             if let selected = selectedCharacter {
-                NavigationLink(destination: {
-                    CustomizationView()
-                        .onAppear {
-                            avatar.selectedItems[.selectCharacter] = selected
-                            avatar.saveCurrentAvatar()
-                        }
-                }) {
+                NavigationLink(value: AppRoute.customization) {
                     Text("Next")
-                        .bold()
-                        .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+                .font(.heading(size: 48))
                 .padding()
+                .onAppear {
+                    avatar.selectedItems[.selectCharacter] = selected
+                    avatar.saveCurrentAvatar()
+                }
             }
         }
         .background(Color.bgColor)
@@ -145,6 +143,6 @@ struct CharacterSelectView: View {
 
 #Preview {
     PreviewWrapper {
-        CharacterSelectView()
+        CharacterSelectView(path: .constant(NavigationPath()))
     }
 }

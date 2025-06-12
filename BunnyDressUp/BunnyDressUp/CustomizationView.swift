@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CustomizationView: View {
     @EnvironmentObject var avatar: AvatarModel
+    @Binding var path: NavigationPath
+
     @State private var selectedCategory: CustomizationCategory = .background
     @State private var showGallery = false
 
@@ -103,24 +105,20 @@ struct CustomizationView: View {
             Spacer()
 
             AvatarPreviewView()
-
-            Button("Add to Gallery!") {
-                avatar.saveCurrentAvatar()
-                showGallery = true
+            
+            NavigationLink(value: AppRoute.share) {
+                Text("Next")
             }
             .buttonStyle(.borderedProminent)
+            .font(.heading(size: 48))
             .padding()
         }
         .appStyle()
-        .navigationDestination(isPresented: $showGallery) {
-            GalleryView()
-                .environmentObject(avatar)
-        }
     }
 }
 
 #Preview {
     PreviewWrapper {
-        CustomizationView()
+        CustomizationView(path: .constant(NavigationPath()))
     }
 }

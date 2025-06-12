@@ -10,17 +10,20 @@ import SwiftUI
 @main
 struct DressUpApp: App {
     @StateObject private var avatar = AvatarModel()
+    @State private var path = NavigationPath()
 
     var body: some Scene {
         WindowGroup {
-            WelcomeView()
-                .environmentObject(avatar)
-                .environment(\.font, Font.body(size: 24))
-                .onAppear {
-                    if avatar.isMusicOn {
-                        MusicPlayer.shared.play()
-                    }
+            NavigationStack(path: $path) {
+                WelcomeView(path: $path)
+            }
+            .environmentObject(avatar)
+            .environment(\.font, Font.body(size: 24))
+            .onAppear {
+                if avatar.isMusicOn {
+                    MusicPlayer.shared.play()
                 }
+            }
         }
     }
 }

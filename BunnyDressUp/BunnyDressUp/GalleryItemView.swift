@@ -43,8 +43,8 @@ struct GalleryItemView: View {
                     }
                     
                     // name laid ontop of the frame cutely :)
-                    Text(saved.name.isEmpty ? saved.date.formatted(date: .abbreviated, time: .omitted) : saved.name)
-                        .font(.alert(size:16))
+                    Text(saved.name.isEmpty ? saved.date.toShortDateString() : saved.name)
+                        .font(.alert(size: 16))
                         .padding(.bottom, 22)
                 }
             }
@@ -52,9 +52,18 @@ struct GalleryItemView: View {
     }
 }
 
+extension Date {
+    func toShortDateString() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX") // ensures consistent output
+        formatter.dateFormat = "MM/d/yyyy" // e.g. Jun 11, 2025
+        return formatter.string(from: self)
+    }
+}
+
 #Preview{
     PreviewWrapper{
-        GalleryView()
+        GalleryView(path: .constant(NavigationPath()))
     }
 }
 

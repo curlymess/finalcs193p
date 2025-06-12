@@ -11,22 +11,31 @@ struct SaveOutfitSheet: View {
     @EnvironmentObject var avatar: AvatarModel
     @Environment(\.dismiss) private var dismiss
     @State private var outfitName: String = ""
-
+    var onSave: () -> Void
+    
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Outfit name", text: $outfitName)
+                Section{
+                    Text("Name your Bunny")
+                        .font(.body(size: 32))
+                    TextField("Name", text: $outfitName)
                 }
             }
-            .navigationTitle("Save Outfit")
+//            .navigationTitle("Edit Bunny Info")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                        .font(.body(size: 32))
                 }
+                
                 ToolbarItem(placement: .confirmationAction){
                     Button("Save") {
                         avatar.saveOutfit(named: outfitName)
+                        onSave()
                         dismiss()
+                    }
+                    .font(.body(size: 32))
                 }
             }
         }
@@ -35,7 +44,7 @@ struct SaveOutfitSheet: View {
 
 #Preview {
     PreviewWrapper{
-        SaveOutfitSheet()
+//        SaveOutfitSheet()
     }
 }
 

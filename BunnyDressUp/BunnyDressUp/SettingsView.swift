@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var avatar: AvatarModel
+    @Binding var path: NavigationPath
 
     var body: some View {
         Form {
@@ -27,7 +28,7 @@ struct SettingsView: View {
 
 #Preview {
     PreviewWrapper{
-        SettingsView()
+        SettingsView(path: .constant(NavigationPath()))
     }
 }
 
